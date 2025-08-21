@@ -7,7 +7,7 @@
 ╚═╝  ╚═╝   ╚═╝   ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═╝
 ```
 
-# Hydra - ROS2 Node Management System
+# Hydra - Hybrid Dynamic Robot Agent
 
 Hydra is a Python-based node management system for ROS2 that provides centralized configuration, lifecycle management, and monitoring of distributed robotics nodes. It enables declarative node deployment through YAML configuration files with support for both background and interactive terminal-based execution.
 
@@ -222,8 +222,33 @@ python3 tests/test_run_nodes.py
 
 ## License
 
-[Add your license information here]
+This project is licensed under the Apache License 2.0
 
-## Contributing
+```
+Copyright 2025 Hydra Contributors
 
-[Add contributing guidelines here]
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+```
+
+## Citing
+
+If you use this software in your research, please cite:
+```
+@software{hydra,
+  title={Hydra - ROS2-based Managed Node Agent},
+  author={Siddharth Vaghela},
+  year={2025},
+  url={https://github.com/artineering/hydra}
+}
+```
+
