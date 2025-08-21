@@ -1,0 +1,75 @@
+# Hydra Configuration for TurtleSim Demo
+# This example demonstrates launching multiple turtlesim nodes with different configurations
+
+nodes:
+  # Main turtlesim simulator node
+  - name: "turtlesim_node"
+    package: "turtlesim"
+    executable: "turtlesim_node"
+    namespace: "/turtle1"
+    enabled: true
+    auto_restart: true
+    respawn_delay: 2.0
+    parameters:
+      background_r: 50
+      background_g: 100
+      background_b: 200
+    remappings: {}
+
+  # Turtle teleop keyboard control for first turtle
+  - name: "turtle_teleop_key"
+    package: "turtlesim"
+    executable: "turtle_teleop_key"
+    namespace: "/turtle1"
+    enabled: true
+    auto_restart: false
+    respawn_delay: 1.0
+    parameters: {}
+    remappings:
+      turtle1/cmd_vel: "/turtle1/turtle1/cmd_vel"
+
+  # Second turtlesim node with different background
+  - name: "turtlesim_node_2"
+    package: "turtlesim"
+    executable: "turtlesim_node"
+    namespace: "/turtle2"
+    enabled: true
+    auto_restart: true
+    respawn_delay: 3.0
+    parameters:
+      background_r: 200
+      background_g: 50
+      background_b: 100
+    remappings: {}
+
+  # Draw circle node for second turtle
+  - name: "draw_circle"
+    package: "turtlesim"
+    executable: "draw_square"
+    namespace: "/turtle2"
+    enabled: false  # Disabled by default, can be enabled at runtime
+    auto_restart: true
+    respawn_delay: 5.0
+    parameters: {}
+    remappings:
+      turtle1/cmd_vel: "/turtle2/turtle1/cmd_vel"
+
+  # Mimic node to make second turtle follow first turtle's movements
+  - name: "mimic_turtle"
+    package: "turtlesim"
+    executable: "mimic"
+    namespace: "/turtle_mimic"
+    enabled: true
+    auto_restart: true
+    respawn_delay: 2.0
+    parameters: {}
+    remappings:
+      input/pose: "/turtle1/turtle1/pose"
+      output/cmd_vel: "/turtle2/turtle1/cmd_vel"
+
+# Global system configuration
+system:
+  log_level: "INFO"
+  max_restart_attempts: 5
+  health_check_interval: 10.0
+  graceful_shutdown_timeout: 15.0

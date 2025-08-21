@@ -10,8 +10,8 @@ Attributes:
     status (NodeStatus): The current status of the node, represented by the NodeStatus enum. Defaults to NodeStatus.UNINITIALIZED.
 """
 
-from dataclasses import dataclass
-from typing import Dict
+from dataclasses import dataclass, field
+from typing import Dict, Any
 from .nodeState import NodeState
 
 @dataclass
@@ -20,8 +20,8 @@ class NodeConfig:
     name: str
     executable: str
     namespace: str = "/"
-    remappings: Dict(str, str) = {}
-    parameters: Dict(str, any) = {}
+    remappings: Dict[str, str] = field(default_factory=dict)
+    parameters: Dict[str, Any] = field(default_factory=dict)
     state: NodeState = NodeState.UNINITIALIZED
     enabled: bool = True
     auto_restart: bool = True

@@ -1,7 +1,7 @@
 import subprocess
 import logging
 from datetime import datetime
-from typing import List, Optional
+from typing import List
 
 from .internal.nodeConfig import NodeConfig
 from .internal.nodeState import NodeState
