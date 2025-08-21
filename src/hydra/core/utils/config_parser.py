@@ -117,6 +117,7 @@ class ConfigurationParser:
         enabled = bool(node_data.get('enabled', True))
         auto_restart = bool(node_data.get('auto_restart', True))
         respawn_delay = float(node_data.get('respawn_delay', 2.0))
+        use_terminal = bool(node_data.get('use_terminal', False))
         
         # Extract remappings and parameters
         remappings = self._parse_remappings(node_data.get('remappings', {}))
@@ -132,7 +133,8 @@ class ConfigurationParser:
             state=NodeState.UNINITIALIZED,
             enabled=enabled,
             auto_restart=auto_restart,
-            respawn_delay=respawn_delay
+            respawn_delay=respawn_delay,
+            use_terminal=use_terminal
         )
     
     def _parse_remappings(self, remappings_data: Dict[str, Any]) -> Dict[str, str]:

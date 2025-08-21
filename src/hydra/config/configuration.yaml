@@ -24,6 +24,7 @@ nodes:
     enabled: true
     auto_restart: false
     respawn_delay: 1.0
+    use_terminal: true
     parameters: {}
     remappings:
       turtle1/cmd_vel: "/turtle1/turtle1/cmd_vel"

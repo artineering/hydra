@@ -27,21 +27,14 @@ class NodeRunner:
         self.running = False
     
     def load_nodes_from_config(self, config_path: str):
-        """Load node configurations and create ManagedNode instances for specific nodes only."""
+        """Load all node configurations and create ManagedNode instances."""
         parser = ConfigurationParser()
-        
-        # Only load these specific nodes
-        target_nodes = ["turtlesim_node", "turtle_teleop_key"]
         
         try:
             node_configs = parser.parse_file(config_path)
             logger.info(f"Loaded {len(node_configs)} node configurations from file")
             
-            # Filter to only the target nodes
-            filtered_configs = [config for config in node_configs if config.name in target_nodes]
-            logger.info(f"Filtered to {len(filtered_configs)} target nodes: {target_nodes}")
-            
-            for config in filtered_configs:
+            for config in node_configs:
                 managed_node = ManagedNode(config)
                 self.managed_nodes.append(managed_node)
                 logger.info(f"Created ManagedNode: {config.name}")
@@ -104,6 +97,7 @@ class NodeRunner:
             print(f"  Running: {status['running']}")
             print(f"  PID: {status['pid']}")
             print(f"  Auto-restart: {node.config.auto_restart}")
+            print(f"  Use terminal: {node.config.use_terminal}")
             if status['last_error']:
                 print(f"  Last Error: {status['last_error']}")
             print("-" * 40)
@@ -140,14 +134,14 @@ def main():
         node_runner.print_status()
         
         # Ask user if they want to start the nodes
-        response = input("\nDo you want to start the TurtleSim nodes? (y/n): ").strip().lower()
+        response = input("\nDo you want to start the enabled nodes? (y/n): ").strip().lower()
         
         if response == 'y' or response == 'yes':
             node_runner.start_enabled_nodes()
             
-            print("\nTurtleSim nodes are running!")
-            print("- The TurtleSim GUI window should now be open")
-            print("- Use the teleop terminal to control the turtle with arrow keys")
+            print("\nEnabled nodes are now running!")
+            print("- Check the status below to see which nodes started successfully")
+            print("- Nodes with use_terminal=true should run in separate terminals")
             print("- Press Ctrl+C to stop all nodes")
             print("\nStatus will be displayed every 10 seconds...\n")
             

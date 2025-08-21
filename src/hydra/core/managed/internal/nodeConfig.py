@@ -2,12 +2,17 @@
 NodeConfig is a data class that encapsulates the configuration for a node within the system.
 
 Attributes:
-    packageName (str): The name of the package containing the node. Defaults to an empty string.
-    nodeName (str): The name of the node. Defaults to an empty string.
-    paramFileName (str): The filename of the parameter file associated with the node. Defaults to an empty string.
-    remappings (Dict): A dictionary specifying topic or service remappings for the node. Defaults to an empty dictionary.
-    parameters (Dict): A dictionary containing parameter names and their corresponding values for the node. Defaults to an empty dictionary.
-    status (NodeStatus): The current status of the node, represented by the NodeStatus enum. Defaults to NodeStatus.UNINITIALIZED.
+    package (str): The name of the ROS2 package containing the node.
+    name (str): The name of the node instance.
+    executable (str): The executable name within the package.
+    namespace (str): The ROS2 namespace for the node. Defaults to "/".
+    remappings (Dict[str, str]): A dictionary specifying topic or service remappings for the node. Defaults to an empty dictionary.
+    parameters (Dict[str, Any]): A dictionary containing parameter names and their corresponding values for the node. Defaults to an empty dictionary.
+    state (NodeState): The current status of the node, represented by the NodeState enum. Defaults to NodeState.UNINITIALIZED.
+    enabled (bool): Whether the node should be started when the system launches. Defaults to True.
+    auto_restart (bool): Whether the node should be automatically restarted if it fails. Defaults to True.
+    respawn_delay (float): The delay in seconds before restarting a failed node. Defaults to 2.0.
+    use_terminal (bool): Whether the node should be launched in a separate terminal window. Defaults to False.
 """
 
 from dataclasses import dataclass, field
@@ -26,3 +31,4 @@ class NodeConfig:
     enabled: bool = True
     auto_restart: bool = True
     respawn_delay: float = 2.0
+    use_terminal: bool = False
