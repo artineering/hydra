@@ -111,6 +111,7 @@ class ConfigurationParser:
         name = str(node_data['name'])
         package = str(node_data['package'])
         executable = str(node_data['executable'])
+        launch_file = str(node_data.get('launch_file',''))
         
         # Extract optional fields with defaults
         namespace = str(node_data.get('namespace', '/'))
@@ -127,6 +128,7 @@ class ConfigurationParser:
             name=name,
             package=package,
             executable=executable,
+            launch_file=launch_file,
             namespace=namespace,
             remappings=remappings,
             parameters=parameters,

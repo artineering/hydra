@@ -16,23 +16,33 @@ class ManagedNode:
     
     def _prepareCommand(self) -> List[str]:
         """Prepare the ROS2 command to launch the node."""
-        cmd = ["ros2", "run", self.config.package, self.config.executable]
-        
-        # Add ROS args if we have parameters or remappings
-        if self.config.parameters or self.config.remappings or self.config.namespace != "/":
-            cmd.append("--ros-args")
+        if self.config.launch_file:
+            # Use ros2 launch for launch files
+            cmd = ["ros2", "launch", self.config.package, self.config.launch_file]
             
-            # Add namespace
-            if self.config.namespace and self.config.namespace != "/":
-                cmd.extend(["-r", f"__ns:={self.config.namespace}"])
-            
-            # Add parameter remappings
-            for old_name, new_name in self.config.remappings.items():
-                cmd.extend(["-r", f"{old_name}:={new_name}"])
-            
-            # Add parameters
+            # Add launch arguments
             for param_name, param_value in self.config.parameters.items():
-                cmd.extend(["-p", f"{param_name}:={param_value}"])
+                cmd.append(f"{param_name}:={param_value}")
+                
+        else:
+            # Use ros2 run for executables
+            cmd = ["ros2", "run", self.config.package, self.config.executable]
+            
+            # Add ROS args if we have parameters or remappings
+            if self.config.parameters or self.config.remappings or self.config.namespace != "/":
+                cmd.append("--ros-args")
+                
+                # Add namespace
+                if self.config.namespace and self.config.namespace != "/":
+                    cmd.extend(["-r", f"__ns:={self.config.namespace}"])
+                
+                # Add parameter remappings
+                for old_name, new_name in self.config.remappings.items():
+                    cmd.extend(["-r", f"{old_name}:={new_name}"])
+                
+                # Add parameters
+                for param_name, param_value in self.config.parameters.items():
+                    cmd.extend(["-p", f"{param_name}:={param_value}"])
         
         return cmd
     

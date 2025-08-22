@@ -5,6 +5,7 @@ Attributes:
     package (str): The name of the ROS2 package containing the node.
     name (str): The name of the node instance.
     executable (str): The executable name within the package.
+    launch_file (str, optional): The launch file name within the package. If provided, uses 'ros2 launch' instead of 'ros2 run'.
     namespace (str): The ROS2 namespace for the node. Defaults to "/".
     remappings (Dict[str, str]): A dictionary specifying topic or service remappings for the node. Defaults to an empty dictionary.
     parameters (Dict[str, Any]): A dictionary containing parameter names and their corresponding values for the node. Defaults to an empty dictionary.
@@ -16,7 +17,7 @@ Attributes:
 """
 
 from dataclasses import dataclass, field
-from typing import Dict, Any
+from typing import Dict, Any, Optional
 from .nodeState import NodeState
 
 @dataclass
@@ -24,6 +25,7 @@ class NodeConfig:
     package: str
     name: str
     executable: str
+    launch_file: Optional[str] = None
     namespace: str = "/"
     remappings: Dict[str, str] = field(default_factory=dict)
     parameters: Dict[str, Any] = field(default_factory=dict)

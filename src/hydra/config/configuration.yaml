@@ -68,6 +68,32 @@ nodes:
       input/pose: "/turtle1/turtle1/pose"
       output/cmd_vel: "/turtle2/turtle1/cmd_vel"
 
+  # Foxglove Bridge for data visualization
+  - name: "foxglove_bridge"
+    package: "foxglove_bridge"
+    executable: ""
+    launch_file: "foxglove_bridge_launch.xml"
+    namespace: "/"
+    enabled: true
+    auto_restart: true
+    respawn_delay: 3.0
+    parameters: {}
+    remappings: {}
+    use_terminal: true
+
+  # Robot State Publisher (example for robot visualization)
+  - name: "robot_state_publisher"
+    package: "robot_state_publisher"
+    executable: "robot_state_publisher"
+    namespace: "/"
+    enabled: true
+    auto_restart: true
+    respawn_delay: 3.0
+    parameters:
+      robot_description: ""
+      use_tf_static: true
+    remappings: {}
+
 # Global system configuration
 system:
   log_level: "INFO"
