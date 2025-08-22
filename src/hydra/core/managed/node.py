@@ -1,7 +1,5 @@
 import subprocess
 import logging
-import tempfile
-import os
 from datetime import datetime
 from typing import List
 
@@ -43,99 +41,47 @@ class ManagedNode:
         try:
             ros2_command = " ".join(cmd)
             
-            # Create a script to run in the terminal
-            script_content = f"""#!/bin/bash
-echo "Starting {self.config.name}..."
-echo "Command: {ros2_command}"
-echo "Press Ctrl+C to stop this node, or close terminal to exit"
-echo "----------------------------------------"
-
-# Function to handle cleanup when terminal is closed
-cleanup() {{
-    echo ""
-    echo "Node {self.config.name} is stopping..."
-    # Kill any background processes if they exist
-    jobs -p | xargs -r kill 2>/dev/null
-    exit 0
-}}
-
-# Set up signal handlers
-trap cleanup SIGTERM SIGINT
-
-# Run the ROS2 command
-{ros2_command} &
-ROS_PID=$!
-
-# Wait for the ROS process to complete
-wait $ROS_PID
-EXIT_CODE=$?
-
-echo ""
-if [ $EXIT_CODE -eq 0 ]; then
-    echo "Node {self.config.name} completed successfully."
-else
-    echo "Node {self.config.name} exited with code $EXIT_CODE."
-fi
-echo "Press Enter to close this terminal..."
-read
-"""
+            # Try different terminal emulators with shell=True
+            terminal_commands = [
+                f'gnome-terminal -- bash -c "echo \\"Starting {self.config.name}...\\"; echo \\"Command: {ros2_command}\\"; echo \\"Press Ctrl+C to stop\\"; {ros2_command}; echo \\"Press Enter to close\\"; read"',
+                f'xterm -e bash -c "echo \\"Starting {self.config.name}...\\"; echo \\"Command: {ros2_command}\\"; echo \\"Press Ctrl+C to stop\\"; {ros2_command}; echo \\"Press Enter to close\\"; read"',
+                f'konsole -e bash -c "echo \\"Starting {self.config.name}...\\"; echo \\"Command: {ros2_command}\\"; echo \\"Press Ctrl+C to stop\\"; {ros2_command}; echo \\"Press Enter to close\\"; read"'
+            ]
             
-            # Write script to temporary file
-            
-            script_fd, script_path = tempfile.mkstemp(suffix=f"_hydra_{self.config.name}.sh", text=True)
-            try:
-                with os.fdopen(script_fd, 'w') as f:
-                    f.write(script_content)
-                os.chmod(script_path, 0o755)
-                
-                # Launch in new terminal (try different terminal emulators)
-                terminal_commands = [
-                    # GNOME Terminal
-                    ["gnome-terminal", "--", "bash", script_path],
-                    # xterm
-                    ["xterm", "-e", f"bash {script_path}"],
-                    # Konsole (KDE)
-                    ["konsole", "-e", "bash", script_path],
-                    # Terminal (macOS)
-                    ["osascript", "-e", f'tell application "Terminal" to do script "bash {script_path}"']
-                ]
-                
-                terminal_process = None
-                for cmd_attempt in terminal_commands:
-                    try:
-                        terminal_process = subprocess.Popen(
-                            cmd_attempt,
-                            stdout=subprocess.DEVNULL,
-                            stderr=subprocess.DEVNULL
-                        )
-                        self.logger.info(f"Launched {self.config.name} in terminal using {cmd_attempt[0]}")
-                        break
-                    except FileNotFoundError:
-                        continue
-                
-                if terminal_process is None:
-                    # Fallback: launch in background without terminal
-                    self.logger.warning(f"No terminal emulator found, launching {self.config.name} in background")
+            terminal_process = None
+            for terminal_cmd in terminal_commands:
+                try:
                     terminal_process = subprocess.Popen(
-                        cmd,
-                        stdout=subprocess.PIPE,
-                        stderr=subprocess.PIPE,
-                        universal_newlines=True
+                        terminal_cmd,
+                        shell=True,
+                        stdout=subprocess.DEVNULL,
+                        stderr=subprocess.DEVNULL
                     )
-                
-                # Store the terminal process (not the actual ROS node process)
-                self.state.process = terminal_process
-                self.state.pid = terminal_process.pid
-                self.state.start_time = datetime.now()
-                self.state.state = NodeState.RUNNING
-                self.state.last_error = None
-                
-                return True
-                
-            finally:
-                # Don't remove the script immediately, let the terminal process handle it
-                pass
-                
+                    terminal_name = terminal_cmd.split()[0]
+                    self.logger.info(f"Launched {self.config.name} in terminal using {terminal_name}")
+                    break
+                except Exception:
+                    continue
+            
+            if terminal_process is None:
+                # Fallback: launch in background without terminal
+                self.logger.warning(f"No terminal emulator found, launching {self.config.name} in background")
+                terminal_process = subprocess.Popen(
+                    cmd,
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.PIPE,
+                    universal_newlines=True
+                )
+            
+            # Store the terminal process (not the actual ROS node process)
+            self.state.process = terminal_process
+            self.state.pid = terminal_process.pid
+            self.state.start_time = datetime.now()
+            self.state.state = NodeState.RUNNING
+            self.state.last_error = None
+            
+            return True
+            
         except Exception as e:
             error_msg = f"Failed to start {self.config.name} in terminal: {str(e)}"
             self.logger.error(error_msg)

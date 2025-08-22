@@ -35,7 +35,7 @@ nodes:
     executable: "turtlesim_node"
     namespace: "/turtle2"
     enabled: true
-    auto_restart: true
+    auto_restart: false
     respawn_delay: 3.0
     parameters:
       background_r: 200
@@ -49,7 +49,7 @@ nodes:
     executable: "draw_square"
     namespace: "/turtle2"
     enabled: false  # Disabled by default, can be enabled at runtime
-    auto_restart: true
+    auto_restart: false
     respawn_delay: 5.0
     parameters: {}
     remappings:
@@ -61,7 +61,7 @@ nodes:
     executable: "mimic"
     namespace: "/turtle_mimic"
     enabled: true
-    auto_restart: true
+    auto_restart: false
     respawn_delay: 2.0
     parameters: {}
     remappings:
